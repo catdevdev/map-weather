@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import Head from "next/head";
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, InfoWindow } from "@react-google-maps/api";
 
 declare global {
   interface Window {
@@ -20,6 +20,11 @@ const Index = ({ GOOGLE_MAP_KEY }) => {
   });
 
   const [map, setMap] = useState(null);
+  const [clickedCoordinates, setClickedCoordinates] = useState({
+    lat: 0,
+    lng: 0,
+  });
+  const [showPopup, setShowPopup] = useState(false);
 
   const onLoad = useCallback(function callback(map) {
     const bounds = new window.google.maps.LatLngBounds();
@@ -44,9 +49,21 @@ const Index = ({ GOOGLE_MAP_KEY }) => {
           zoom={10}
           onLoad={onLoad}
           onUnmount={onUnmount}
+          options={{ disableDoubleClickZoom: true }}
+          onDblClick={(e) => {
+            console.log(e.latLng.lat());
+            console.log(e.latLng.lng());
+            setClickedCoordinates({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+          }}
         >
-          {/* Child components, such as markers, info windows, etc. */}
-          <></>
+          <InfoWindow
+            position={{
+              lat: clickedCoordinates.lat,
+              lng: clickedCoordinates.lng,
+            }}
+          >
+            <h1>test</h1>
+          </InfoWindow>
         </GoogleMap>
       ) : (
         <></>
